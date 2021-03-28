@@ -14,6 +14,7 @@ public class Basket {
     private final List<Item> items;
     private final List<Promotion> promotions;
     private final BasketTotals basketTotals;
+    private boolean checkedOut = false;
 
     private static final NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.UK);
 
@@ -26,7 +27,7 @@ public class Basket {
 
     @SneakyThrows
     public BasketTotals getBasketTotals() {
-        Integer rawTotal = Optional.ofNullable(items.stream().collect(Collectors.summingInt(Item::getPrice))).orElse(0);
+        Integer rawTotal = Optional.ofNullable(items.stream().collect(Collectors.summingInt(i -> i.getProduct().getPrice() * i.getAmount()))).orElse(0);
         Integer totalPromos = Optional.ofNullable(promotions.stream().collect(Collectors.summingInt(Promotion::getDiscount))).orElse(0);
         Integer totalPayable = rawTotal - totalPromos;
 

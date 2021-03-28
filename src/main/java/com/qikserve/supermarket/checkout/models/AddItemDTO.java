@@ -1,17 +1,20 @@
 package com.qikserve.supermarket.checkout.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Data
-public class Item {
+@AllArgsConstructor
+public class AddItemDTO {
 
     @NotNull
-    private Product product;
+    private final UUID idProduct;
 
     @NotNull
-    @Min(value = 1)
-    private Integer amount;
+    @Min(1)
+    private final Integer amount;
 }
