@@ -8,10 +8,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -30,18 +28,23 @@ public class CheckoutExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ProductException.class)
     public ResponseEntity<Object> handleHttpMessageNotReadable(ProductException ex, WebRequest request) {
-        String userMessage = messageSource.getMessage(ex.getMessage(), null, LocaleContextHolder.getLocale());
-        String developerMessage = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
-        List<Error> erros = Arrays.asList(new Error(userMessage, developerMessage));
+        List<Error> erros = Arrays.asList(new Error(getUserMessage(ex.getMessage()), getDeveloperMessage(ex)));
         return handleExceptionInternal(ex, erros, new HttpHeaders(), ex.getStatus(), request);
+    }
+
+    private String getDeveloperMessage(ProductException ex) {
+        return ex.getCause() != null ? ex.getCause().toString() : ex.toString();
     }
 
     @ExceptionHandler(SocketTimeoutException.class)
     public ResponseEntity<Object> handleSocketTimeoutException(SocketTimeoutException ex, WebRequest request) {
-        String userMessage = messageSource.getMessage("wiremockserver.timeout", null, LocaleContextHolder.getLocale());
-        String developerMessage = ex.toString();
-        List<Error> errors = Arrays.asList(new Error(userMessage, developerMessage));
+        String userMessage = getUserMessage("wiremockserver.timeout");
+        List<Error> errors = Arrays.asList(new Error(userMessage, ex.toString()));
         return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.REQUEST_TIMEOUT, request);
+    }
+
+    private String getUserMessage(String s) {
+        return messageSource.getMessage(s, null, LocaleContextHolder.getLocale());
     }
 
     @Data
