@@ -1,4 +1,4 @@
-package com.qikserve.supermarket.checkout.exceptionhandler;
+package com.qikserve.supermarket.checkout.excetions.handlers;
 
 import com.qikserve.supermarket.checkout.excetions.ProductException;
 import lombok.AllArgsConstructor;
