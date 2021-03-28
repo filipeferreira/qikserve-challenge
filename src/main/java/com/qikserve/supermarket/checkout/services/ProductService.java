@@ -1,10 +1,13 @@
 package com.qikserve.supermarket.checkout.services;
 
+import com.qikserve.supermarket.checkout.excetions.ProductException;
 import com.qikserve.supermarket.checkout.models.Product;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,21 +30,15 @@ public class ProductService {
     }
 
     public List<Product> getProducts() {
-        try {
-            return Arrays.asList(restTemplate.getForEntity(wiremockProductsUrl, Product[].class).getBody());
-        } catch (RestClientException rce) {
-            throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT, "Products aren't available. Try again later.");
-        }
+        return Arrays.asList(restTemplate.getForEntity(wiremockProductsUrl, Product[].class).getBody());
     }
 
+    @SneakyThrows
     public Optional<Product> getProduct(String id) {
         try {
             return Optional.ofNullable(restTemplate.getForEntity(wiremockProductsUrl + "/" + id, Product.class).getBody());
-        } catch (RestClientException rce) {
-            if (rce.getCause() instanceof SocketTimeoutException) {
-                throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT, "Products aren't available. Try again later.");
-            }
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found.");
+        } catch (HttpClientErrorException e) {
+            throw new ProductException("product.notfound", e, e.getStatusCode());
         }
     }
 }
