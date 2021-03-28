@@ -9,6 +9,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,10 @@ public class ProductService {
         try {
             return Optional.ofNullable(restTemplate.getForEntity(wiremockProductsUrl + "/" + id, Product.class).getBody());
         } catch (RestClientException rce) {
-            throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT, "Products aren't available. Try again later.");
+            if (rce.getCause() instanceof SocketTimeoutException) {
+                throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT, "Products aren't available. Try again later.");
+            }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found.");
         }
     }
 }
