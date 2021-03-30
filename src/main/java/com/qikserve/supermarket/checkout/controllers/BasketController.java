@@ -26,7 +26,7 @@ public class BasketController {
     @PostMapping("/{idBasket}/add-item")
     public Basket addItem(@PathVariable UUID idBasket,
                           @Valid @RequestBody AddItemDTO addItemDTO) {
-        return null;
+        return basketService.addItem(idBasket, addItemDTO);
     }
 
 }

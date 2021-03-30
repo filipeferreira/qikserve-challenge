@@ -1,4 +1,4 @@
-package com.qikserve.supermarket.checkout;
+package com.qikserve.supermarket.checkout.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -16,8 +16,8 @@ public class IntegrationsConfig {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder
-                .setConnectTimeout(Duration.ofMillis(1000))
-                .setReadTimeout(Duration.ofMillis(1000))
+                .setConnectTimeout(Duration.ofMillis(10000))
+                .setReadTimeout(Duration.ofMillis(10000))
                 .messageConverters(
                         new MappingJackson2HttpMessageConverter()
                 )

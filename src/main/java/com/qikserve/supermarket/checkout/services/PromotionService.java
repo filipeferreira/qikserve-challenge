@@ -28,7 +28,8 @@ public class PromotionService {
     }
 
     private boolean promotionExists(Promotion promotion) {
-        return promotions.stream().anyMatch(p -> p.getId().equals(promotion.getId()) || p.getCode().equals(promotion.getCode()));
+        return promotions.stream()
+                .anyMatch(p -> p.getId().equals(promotion.getId()) || p.getCode().equals(promotion.getCode()));
     }
 
     public List<Promotion> getPromotions() {

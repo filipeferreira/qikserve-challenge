@@ -1,6 +1,5 @@
 package com.qikserve.supermarket.checkout.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;

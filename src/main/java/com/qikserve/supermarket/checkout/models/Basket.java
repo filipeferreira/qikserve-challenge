@@ -27,12 +27,24 @@ public class Basket {
 
     @SneakyThrows
     public BasketTotals getBasketTotals() {
-        Integer rawTotal = Optional.ofNullable(items.stream().collect(Collectors.summingInt(i -> i.getProduct().getPrice() * i.getAmount()))).orElse(0);
-        Integer totalPromos = Optional.ofNullable(promotions.stream().collect(Collectors.summingInt(Promotion::getDiscount))).orElse(0);
-        Integer totalPayable = rawTotal - totalPromos;
+        Double rawTotal = Optional.ofNullable(items.stream().collect(Collectors.summingDouble(i -> i.getProduct().getPrice() * i.getAmount()))).orElse(0.00);
+        Double totalPromos = Optional.ofNullable(promotions.stream().collect(Collectors.summingDouble(Promotion::getDiscount))).orElse(0.00);
+        Double totalPayable = rawTotal - totalPromos;
 
         if (totalPayable < 0) {
-            totalPayable = 0;
+            totalPayable = 0.00;
+        }
+
+        if (rawTotal > 0) {
+            rawTotal /= 100;
+        }
+
+        if (totalPromos > 0) {
+            totalPromos /= 100;
+        }
+
+        if (totalPayable > 0) {
+            totalPayable /= 100;
         }
 
         basketTotals.setRawTotal(currencyFormatter.format(rawTotal));

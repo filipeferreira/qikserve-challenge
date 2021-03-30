@@ -4,7 +4,6 @@ import com.qikserve.supermarket.checkout.excetions.ProductException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.net.SocketTimeoutException;
@@ -60,8 +60,15 @@ public class CheckoutExceptionHandler extends ResponseEntityExceptionHandler {
         return errors;
     }
 
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex, WebRequest request) {
+        List<Error> errors = Arrays.asList(new Error(getUserMessage(ex.getReason()), getDeveloperMessage(ex)));
+        return handleExceptionInternal(ex, errors, new HttpHeaders(), ex.getStatus(), request);
+    }
+
     @ExceptionHandler(ProductException.class)
-    public ResponseEntity<Object> handleHttpMessageNotReadable(ProductException ex, WebRequest request) {
+    public ResponseEntity<Object> handleProductException(ProductException ex, WebRequest request) {
         List<Error> errors = Arrays.asList(new Error(getUserMessage(ex.getMessage()), getDeveloperMessage(ex)));
         return handleExceptionInternal(ex, errors, new HttpHeaders(), ex.getStatus(), request);
     }
