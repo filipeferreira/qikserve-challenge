@@ -22,6 +22,10 @@ public class PromotionService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "promotion.alreadyexists");
         }
 
+        if (promotion.isExpired()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "promotion.create.expired");
+        }
+
         promotions.add(promotion);
 
         return promotion;
@@ -29,10 +33,16 @@ public class PromotionService {
 
     private boolean promotionExists(Promotion promotion) {
         return promotions.stream()
-                .anyMatch(p -> p.getId().equals(promotion.getId()) || p.getCode().equals(promotion.getCode()));
+                .anyMatch(p -> p.getId().equals(promotion.getId()) || p.getCode().equalsIgnoreCase(promotion.getCode()));
     }
 
     public List<Promotion> getPromotions() {
         return promotions;
+    }
+
+    public Promotion getPromotion(String promotionCode) {
+        return promotions.stream().filter(p -> p.getCode().equalsIgnoreCase(promotionCode))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "promotion.notfound"));
     }
 }

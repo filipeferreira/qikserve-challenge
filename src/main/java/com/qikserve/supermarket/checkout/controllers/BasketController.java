@@ -29,4 +29,10 @@ public class BasketController {
         return basketService.addItem(idBasket, addItemDTO);
     }
 
+    @PostMapping("/{idBasket}/add-promotion/{code}")
+    public Basket addPromotion(@PathVariable UUID idBasket,
+                          @PathVariable("code") String promotionCode) {
+        return basketService.addPromotion(idBasket, promotionCode);
+    }
+
 }

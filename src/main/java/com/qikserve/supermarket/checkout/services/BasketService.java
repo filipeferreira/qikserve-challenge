@@ -1,9 +1,7 @@
 package com.qikserve.supermarket.checkout.services;
 
-import com.qikserve.supermarket.checkout.models.AddItemDTO;
-import com.qikserve.supermarket.checkout.models.Basket;
-import com.qikserve.supermarket.checkout.models.Item;
-import com.qikserve.supermarket.checkout.models.Product;
+import com.qikserve.supermarket.checkout.models.*;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,9 +17,12 @@ public class BasketService {
 
     private final List<Basket> baskets;
     private final ProductService productService;
+    private final PromotionService promotionService;
 
-    public BasketService(ProductService productService) {
+    public BasketService(ProductService productService, PromotionService promotionService) {
         this.productService = productService;
+        this.promotionService = promotionService;
+
         baskets = new ArrayList<>();
     }
 
@@ -59,5 +60,25 @@ public class BasketService {
                 .findFirst()
                 .orElse(new Item(product, 0));
         return item;
+    }
+
+    public Basket addPromotion(UUID idBasket, String promotionCode) {
+        Promotion promotion = promotionService.getPromotion(promotionCode);
+        if (promotion.isExpired()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "promotion.expired");
+        }
+
+        if (promotionAlreadyExists(idBasket, promotionCode)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "promotion.alreadyexists");
+        }
+
+        Basket basket = getBasket(idBasket);
+        basket.getPromotions().add(promotion);
+
+        return basket;
+    }
+
+    private boolean promotionAlreadyExists(UUID idBasket, String promotionCode) {
+        return getBasket(idBasket).getPromotions().stream().anyMatch(p -> p.getCode().equals(promotionCode));
     }
 }

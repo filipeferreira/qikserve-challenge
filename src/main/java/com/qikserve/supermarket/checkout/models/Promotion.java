@@ -18,9 +18,12 @@ public class Promotion {
 
     public Promotion(String code, Integer discount, LocalDate expiration) {
         this.id = UUID.randomUUID();
-        this.code = code;
+        this.code = code.toUpperCase();
         this.discount = discount;
         this.expiration = expiration;
     }
 
+    public boolean isExpired() {
+        return LocalDate.now().isAfter(expiration);
+    }
 }

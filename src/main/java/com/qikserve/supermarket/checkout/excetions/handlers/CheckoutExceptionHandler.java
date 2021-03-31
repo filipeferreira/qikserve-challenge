@@ -17,6 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,8 +78,8 @@ public class CheckoutExceptionHandler extends ResponseEntityExceptionHandler {
         return ex.getCause() != null ? ex.getCause().toString() : ex.toString();
     }
 
-    @ExceptionHandler(SocketTimeoutException.class)
-    public ResponseEntity<Object> handleSocketTimeoutException(SocketTimeoutException ex, WebRequest request) {
+    @ExceptionHandler(ConnectException.class)
+    public ResponseEntity<Object> handleSocketTimeoutException(Exception ex, WebRequest request) {
         String userMessage = getUserMessage("wiremockserver.timeout");
         List<Error> errors = Arrays.asList(new Error(userMessage, ex.toString()));
         return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.REQUEST_TIMEOUT, request);
