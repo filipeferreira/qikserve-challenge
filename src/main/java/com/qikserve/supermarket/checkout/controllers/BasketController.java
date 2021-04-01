@@ -23,6 +23,11 @@ public class BasketController {
         return basketService.create();
     }
 
+    @GetMapping("/{idBasket}")
+    public Basket getBasket(@PathVariable UUID idBasket) {
+        return basketService.getBasket(idBasket);
+    }
+
     @PostMapping("/{idBasket}/add-item")
     public Basket addItem(@PathVariable UUID idBasket,
                           @Valid @RequestBody AddItemDTO addItemDTO) {
@@ -33,6 +38,11 @@ public class BasketController {
     public Basket addPromotion(@PathVariable UUID idBasket,
                           @PathVariable("code") String promotionCode) {
         return basketService.addPromotion(idBasket, promotionCode);
+    }
+
+    @PatchMapping("/{idBasket}/checkout")
+    public Basket checkout(@PathVariable UUID idBasket) {
+        return basketService.checkout(idBasket);
     }
 
 }

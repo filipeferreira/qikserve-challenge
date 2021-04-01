@@ -3,6 +3,7 @@ package com.qikserve.supermarket.checkout.excetions.handlers;
 import com.qikserve.supermarket.checkout.excetions.ProductException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,11 @@ public class CheckoutExceptionHandler extends ResponseEntityExceptionHandler {
 
         List<Error> errors = Arrays.asList(new Error(getUserMessage("invalid.request"), getDeveloperMessage(ex)));
         return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return super.handleTypeMismatch(ex, headers, status, request);
     }
 
     @Override

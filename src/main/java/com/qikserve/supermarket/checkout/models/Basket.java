@@ -53,4 +53,9 @@ public class Basket {
 
         return basketTotals;
     }
+
+    public Basket checkedOut(Boolean checkout) {
+        this.checkedOut = checkout;
+        return this;
+    }
 }

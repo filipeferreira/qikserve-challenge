@@ -41,6 +41,11 @@ public class BasketService {
 
     public Basket addItem(UUID idBasket, @Valid AddItemDTO addItemDTO) {
         Basket basket = getBasket(idBasket);
+
+        if (basket.isCheckedOut()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "basket.checkedout");
+        }
+
         Product product = productService.getProduct(addItemDTO.getIdProduct());
         Item item = getItem(basket, product);
         item.setAmount(item.getAmount() + addItemDTO.getAmount());
@@ -63,6 +68,12 @@ public class BasketService {
     }
 
     public Basket addPromotion(UUID idBasket, String promotionCode) {
+        Basket basket = getBasket(idBasket);
+
+        if (basket.isCheckedOut()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "basket.checkedout");
+        }
+
         Promotion promotion = promotionService.getPromotion(promotionCode);
         if (promotion.isExpired()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "promotion.expired");
@@ -72,7 +83,6 @@ public class BasketService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "promotion.alreadyexists");
         }
 
-        Basket basket = getBasket(idBasket);
         basket.getPromotions().add(promotion);
 
         return basket;
@@ -80,5 +90,15 @@ public class BasketService {
 
     private boolean promotionAlreadyExists(UUID idBasket, String promotionCode) {
         return getBasket(idBasket).getPromotions().stream().anyMatch(p -> p.getCode().equals(promotionCode));
+    }
+
+    public Basket checkout(UUID idBasket) {
+        Basket basket = getBasket(idBasket);
+
+        if (basket.getItems().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "basket.emptycheckout");
+        }
+
+        return getBasket(idBasket).checkedOut(true);
     }
 }
