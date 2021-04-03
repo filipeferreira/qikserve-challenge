@@ -1,5 +1,7 @@
 package com.qikserve.supermarket.checkout.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.SneakyThrows;
 
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
 public class Basket {
 
     private final UUID id;
+
+    @JsonProperty
     private final List<Item> items;
     private final List<Promotion> promotions;
     private final BasketTotals basketTotals;

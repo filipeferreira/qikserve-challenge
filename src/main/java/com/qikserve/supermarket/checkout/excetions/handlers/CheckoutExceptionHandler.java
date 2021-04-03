@@ -46,7 +46,8 @@ public class CheckoutExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        return super.handleTypeMismatch(ex, headers, status, request);
+        List<Error> errors = Arrays.asList(new Error(getUserMessage("invalid.argument"), getDeveloperMessage(ex)));
+        return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
     }
 
     @Override
