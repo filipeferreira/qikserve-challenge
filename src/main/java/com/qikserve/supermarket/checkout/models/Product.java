@@ -1,7 +1,6 @@
 package com.qikserve.supermarket.checkout.models;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class Product {

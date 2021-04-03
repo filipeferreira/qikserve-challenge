@@ -14,6 +14,7 @@ public class Promotion {
      * Discount expressed in pennies
      */
     private final Integer discount;
+
     private final LocalDate expiration;
 
     public Promotion(String code, Integer discount, LocalDate expiration) {

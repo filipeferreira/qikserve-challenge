@@ -1,7 +1,6 @@
 package com.qikserve.supermarket.checkout.services;
 
 import com.qikserve.supermarket.checkout.models.*;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -60,11 +59,10 @@ public class BasketService {
     }
 
     private Item getItem(Basket basket, Product product) {
-        Item item = basket.getItems().stream()
+        return basket.getItems().stream()
                 .filter(i -> i.getProduct().getId().equals(product.getId()))
                 .findFirst()
                 .orElse(new Item(product, 0));
-        return item;
     }
 
     public Basket addPromotion(UUID idBasket, String promotionCode) {
@@ -80,7 +78,7 @@ public class BasketService {
         }
 
         if (promotionAlreadyExists(idBasket, promotionCode)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "promotion.alreadyexists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "promotion.alreadyexists");
         }
 
         basket.getPromotions().add(promotion);
@@ -99,6 +97,6 @@ public class BasketService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "basket.emptycheckout");
         }
 
-        return getBasket(idBasket).checkedOut(true);
+        return basket.checkedOut(true);
     }
 }
