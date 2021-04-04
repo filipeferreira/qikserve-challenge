@@ -196,7 +196,7 @@ public class BasketControllerTest {
         String url = String.format("%s/%s/add-promotion/%s", BASE_URL, UUID.randomUUID(), "WHATEVER");
         postRequestWithError(url, null, HttpStatus.NOT_FOUND, "Basket not found.");
 
-        url = String.format("%s/%s/add-promotion/%s", BASE_URL, newBasket.getId(), "DONT_EXISTS");
+        url = String.format("%s/%s/add-promotion/%s", BASE_URL, newBasket.getId(), "DOESNT_EXIST");
         postRequestWithError(url, null, HttpStatus.NOT_FOUND, "Promotion not found.");
 
         promotionService.save(new Promotion("SAVE_150", 150, LocalDate.now()));
