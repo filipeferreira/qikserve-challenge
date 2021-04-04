@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,9 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BasketControllerTest {
 
-    @LocalServerPort
-    private int port;
-
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -51,9 +47,10 @@ public class BasketControllerTest {
     @MockBean
     private ProductService productService;
 
-    private static String BASE_URL;
     private Basket newBasket;
     private static final ObjectMapper mapper = new ObjectMapper();
+
+    private static final String BASE_URL = "/baskets";
 
     @BeforeAll
     static void init() {
@@ -62,7 +59,6 @@ public class BasketControllerTest {
                 .registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES))
                 .registerModule(new JavaTimeModule());
 
-        BASE_URL = "/baskets";
     }
 
     @BeforeEach
@@ -153,16 +149,16 @@ public class BasketControllerTest {
         postRequestWithError(urlAddItem, new AddItemDTO("A", 1), HttpStatus.NOT_FOUND, "Basket not found.");
 
         urlAddItem = String.format("%s/%s/add-item", BASE_URL, newBasket.getId());
-        Basket basket = postRequest(urlAddItem, new AddItemDTO("A", 1), HttpStatus.OK);
+        Basket basket = postRequest(urlAddItem, new AddItemDTO("A", 1));
         assertThat(basket.getItems().size()).isEqualTo(1);
         assertThat(basket.getBasketTotals()).extracting("rawTotal", "totalPayable").allMatch(s -> s.equals("£10.00"));
 
-        basket = postRequest(urlAddItem, new AddItemDTO("A", 1), HttpStatus.OK);
+        basket = postRequest(urlAddItem, new AddItemDTO("A", 1));
         assertThat(basket.getItems().size()).isEqualTo(1);
         assertThat(basket.getItems().stream().filter(i -> i.getProduct().getId().equals("A")).findFirst().get().getAmount()).isEqualTo(2);
         assertThat(basket.getBasketTotals()).extracting("rawTotal", "totalPayable").allMatch(s -> s.equals("£20.00"));
 
-        basket = postRequest(urlAddItem, new AddItemDTO("B", 2), HttpStatus.OK);
+        basket = postRequest(urlAddItem, new AddItemDTO("B", 2));
         assertThat(basket.getItems().size()).isEqualTo(2);
         assertThat(basket.getBasketTotals().getRawTotal()).isEqualTo("£60.00");
 
@@ -183,12 +179,12 @@ public class BasketControllerTest {
                 .andExpect(jsonPath("$[0].userMessage").value(errorMessage));
     }
 
-    private Basket postRequest(String url, Object object, HttpStatus status) throws Exception {
+    private Basket postRequest(String url, Object object) throws Exception {
         MvcResult result = this.mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(object)))
                 .andDo(print())
-                .andExpect(status().is(status.value()))
+                .andExpect(status().is(HttpStatus.OK.value()))
                 .andReturn();
 
         return mapper.readValue(result.getResponse().getContentAsString(), Basket.class);
@@ -206,11 +202,11 @@ public class BasketControllerTest {
         promotionService.save(new Promotion("SAVE_150", 150, LocalDate.now()));
 
         url = String.format("%s/%s/add-promotion/%s", BASE_URL, newBasket.getId(), "SAVE_150");
-        postRequest(url, null, HttpStatus.OK);
+        postRequest(url, null);
 
         url = String.format("%s/%s/add-item", BASE_URL, newBasket.getId());
         AddItemDTO addItemDTO = new AddItemDTO("A", 6);
-        Basket basket = postRequest(url, addItemDTO, HttpStatus.OK);
+        Basket basket = postRequest(url, addItemDTO);
 
         assertThat(basket.getBasketTotals().getRawTotal()).isEqualTo("£60.00");
         assertThat(basket.getBasketTotals().getTotalPromos()).isEqualTo("£1.50");
@@ -225,37 +221,37 @@ public class BasketControllerTest {
     @Order(5)
     void checkout() throws Exception {
         String urlCheckout = String.format("%s/%s/checkout", BASE_URL, UUID.randomUUID());
-        patchRequestWithError(urlCheckout, null, HttpStatus.NOT_FOUND, "Basket not found.");
+        patchRequestWithError(urlCheckout, HttpStatus.NOT_FOUND, "Basket not found.");
 
         urlCheckout = String.format("%s/%s/checkout", BASE_URL, newBasket.getId());
-        patchRequestWithError(urlCheckout, null, HttpStatus.FORBIDDEN, "Basket is empty.");
+        patchRequestWithError(urlCheckout, HttpStatus.FORBIDDEN, "Basket is empty.");
 
         String urlAdditem = String.format("%s/%s/add-item", BASE_URL, newBasket.getId());
         AddItemDTO addItemDTO = new AddItemDTO("A", 1);
-        postRequest(urlAdditem, addItemDTO, HttpStatus.OK);
+        postRequest(urlAdditem, addItemDTO);
 
-        Basket basket = patchRequest(urlCheckout, null, HttpStatus.OK);
+        Basket basket = patchRequest(urlCheckout);
         assertThat(basket.isCheckedOut()).isTrue();
 
         postRequestWithError(urlAdditem, addItemDTO, HttpStatus.FORBIDDEN, "Basket has already been ckeched out.");
 
     }
 
-    private void patchRequestWithError(String url, Object object, HttpStatus errorStatus, String errorMessage) throws Exception {
+    private void patchRequestWithError(String url, HttpStatus errorStatus, String errorMessage) throws Exception {
         this.mockMvc.perform(patch(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(object)))
+                .content(mapper.writeValueAsString(null)))
                 .andDo(print())
                 .andExpect(status().is(errorStatus.value()))
                 .andExpect(jsonPath("$[0].userMessage").value(errorMessage));
     }
 
-    private Basket patchRequest(String url, Object object, HttpStatus status) throws Exception {
+    private Basket patchRequest(String url) throws Exception {
         MvcResult result = this.mockMvc.perform(patch(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(object)))
+                .content(mapper.writeValueAsString(null)))
                 .andDo(print())
-                .andExpect(status().is(status.value()))
+                .andExpect(status().is(HttpStatus.OK.value()))
                 .andReturn();
 
         return mapper.readValue(result.getResponse().getContentAsString(), Basket.class);

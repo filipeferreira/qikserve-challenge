@@ -4,6 +4,7 @@ import com.qikserve.supermarket.checkout.models.Promotion;
 import com.qikserve.supermarket.checkout.services.PromotionService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -17,7 +18,7 @@ public class PromotionController {
     }
 
     @PostMapping
-    public Promotion save(@RequestBody Promotion promotion) {
+    public Promotion save(@Valid @RequestBody Promotion promotion) {
         return promotionService.save(promotion);
     }
 
