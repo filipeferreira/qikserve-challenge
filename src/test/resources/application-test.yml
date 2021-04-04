@@ -1,0 +1,9 @@
+integrations:
+  wiremock:
+    url: http://localhost:8088
+    products: ${integrations.wiremock.url}/products
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
