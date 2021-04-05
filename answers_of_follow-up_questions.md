@@ -1,10 +1,10 @@
 ## Follow up questions
 
-- ####How long did you spend on the test?
+- #### How long did you spend on the test?
 
 I spent a week on the test. 
 
-- ####What would you add if you had more time?
+- #### What would you add if you had more time?
 
 If I had more time, I would have done:
 
@@ -20,16 +20,16 @@ If I had more time, I would have done:
 10) Delete basket's products
 11) Increase or decrease the amount of the basket's products
 
-- ####How would you improve the product APIs that you had to consume?
+- #### How would you improve the product APIs that you had to consume?
 
 1) Update products attributes
 2) Add attributes like brand, supplier
 
-- ####What did you find most difficult?
+- #### What did you find most difficult?
 
 I thought that creating features based on unclear user stories was the most difficult part of the challenge.
 
-- ####How did you find the overall experience, any feedback for us?
+- #### How did you find the overall experience, any feedback for us?
 
 I've enjoyed doing the challenge, but I've never used wiremock before. 
 

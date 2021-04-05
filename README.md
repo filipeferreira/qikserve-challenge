@@ -1,8 +1,8 @@
-#qikserve challenge
+# qikserve challenge
 
 - To run the application execute in a terminal the following command: ./mvnw spring-boot:run
 
-#API methods
+# API methods
 
 ### Products
 
