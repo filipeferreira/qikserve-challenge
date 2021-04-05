@@ -30,6 +30,8 @@ body {
 - get basket by id: GET http://localhost:8080/baskets/{idBasket}
 - add item: POST http://localhost:8080/baskets/{idBasket}/add-item
 
+header Content-type: application/json
+
 body {
          "idProduct" : "4MB7UfpTQs",
          "amount" : 1
