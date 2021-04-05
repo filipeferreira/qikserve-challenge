@@ -64,7 +64,7 @@ public class BasketControllerTest {
     @BeforeEach
     void setUp() {
 
-        newBasket = this.restTemplate.getForObject(BASE_URL + "/new",
+        newBasket = this.restTemplate.postForObject(BASE_URL, null,
                 Basket.class);
 
         when(productService.getProduct("A")).thenReturn(

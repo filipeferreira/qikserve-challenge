@@ -18,31 +18,31 @@ public class BasketController {
         this.basketService = basketService;
     }
 
-    @GetMapping("/new")
+    @PostMapping
     public Basket create() {
         return basketService.create();
     }
 
-    @GetMapping("/{idBasket}")
-    public Basket getBasket(@PathVariable UUID idBasket) {
-        return basketService.getBasket(idBasket);
+    @GetMapping("/{id}")
+    public Basket getBasket(@PathVariable UUID id) {
+        return basketService.getBasket(id);
     }
 
-    @PostMapping("/{idBasket}/add-item")
-    public Basket addItem(@PathVariable UUID idBasket,
+    @PostMapping("/{id}/add-item")
+    public Basket addItem(@PathVariable UUID id,
                           @Valid @RequestBody AddItemDTO addItemDTO) {
-        return basketService.addItem(idBasket, addItemDTO);
+        return basketService.addItem(id, addItemDTO);
     }
 
-    @PostMapping("/{idBasket}/add-promotion/{code}")
-    public Basket addPromotion(@PathVariable UUID idBasket,
+    @PostMapping("/{id}/add-promotion/{code}")
+    public Basket addPromotion(@PathVariable UUID id,
                           @PathVariable("code") String promotionCode) {
-        return basketService.addPromotion(idBasket, promotionCode);
+        return basketService.addPromotion(id, promotionCode);
     }
 
-    @PatchMapping("/{idBasket}/checkout")
-    public Basket checkout(@PathVariable UUID idBasket) {
-        return basketService.checkout(idBasket);
+    @PatchMapping("/{id}/checkout")
+    public Basket checkout(@PathVariable UUID id) {
+        return basketService.checkout(id);
     }
 
 }

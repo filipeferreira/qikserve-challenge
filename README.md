@@ -1,38 +1,39 @@
-## Follow up questions
+#qikserve challenge
 
-- ####How long did you spend on the test?
+- To run the application execute in a terminal the following command: ./mvnw spring-boot:run
 
-I spent a week on the test. 
+#API methods
 
-- ####What would you add if you had more time?
+### Products
 
-If I had more time, I would have done:
+- get all products: GET http://localhost:8080/products
+- get product by id: GET http://localhost:8080/products/{idProduct}
 
-1) Persistence layer for all model objects using JPA/Hibernate, Spring Data JPA
-2) Security layer using spring-security-oauth2
-3) Auditing transactions using spring-data-envers
-4) Web frontend
-5) Sign up feature for new users
-6) Sign in feature for current users
-7) Administration layer: add products, promotions for admin users
-8) Basket analysis and sales metrics: based on technical specification of the supermarket team 
-9) Swagger to visualize and interact with the Rest API
-10) Delete basket's products
-11) Increase or decrease the amount of the basket's products
+Avaliable product's ids: Dwt5F7KAhi, PWWe3w1SDU, C8GDyLrHJb and 4MB7UfpTQs
 
-- ####How would you improve the product APIs that you had to consume?
+### Promotions
 
-1) Update products attributes
-2) Add attributes like brand, supplier
+- get all promotions: GET http://localhost:8080/promotions
+- create new promotion: POST http://localhost:8080/promotions
 
-- ####What did you find most difficult?
+header Content-type: application/json 
 
-I thought that creating features based on unclear user stories was one of the most difficult part of the challenge.
+body {
+         "code" : "SAVE_100",
+         "discount" : 100,
+         "expiration" : "2021-06-01"
+     }
+     
+### Baskets
 
-- ####How did you find the overall experience, any feedback for us?
+- create new basket: POST http://localhost:8080/baskets
+- get basket by id: GET http://localhost:8080/baskets/{idBasket}
+- add item: POST http://localhost:8080/baskets/{idBasket}/add-item
 
-I've enjoyed doing the challenge, but I've never used wiremock before. 
-
-What happened is that I've just checked all the mappings of wiremock when I was integrating with my e2e tests, at the end of the project.
-
-When I read in the document challenge, this part of the text "Think about how the solution would be used to calculate the total cost of a basket which could contain any combination of items and promotions", I've started modelling a basket having a set of promotions and a set of items. A promotion, I thought that could be an object having a code, discount and an expiration date, and that's the way that I've implemented. I've just realized that a promotion is a part of product toda
+body {
+         "idProduct" : "4MB7UfpTQs",
+         "amount" : 1
+     }
+     
+- add promotion to a basket http://localhost:8080/baskets/{idBasket}/add-promotion/{code}
+- checkout a basket http://localhost:8080/baskets/{idBasket}/checkout
